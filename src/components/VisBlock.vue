@@ -39,49 +39,29 @@ function clearID() {
 }
 
 onMounted(() => {
-    const BIGblock = document.querySelectorAll(".bigblock");
-    BIGblock.forEach(block => {
+    addID();
+    let blocks = document.querySelectorAll(".droppable");
+    blocks.forEach(block => {
         block.addEventListener("dragover", function (e) {
             e.preventDefault();
-            addID();
+            block.style.backgroundColor = "#ecf5ff"
         })
         block.addEventListener("dragleave", function (e) {
             e.preventDefault();
-            clearID();
-        })
+            block.style.backgroundColor = "#007bff"
+        });
+        block.addEventListener("drop", function (e) {
+            e.preventDefault();
+            let getChart = e.dataTransfer.getData("html");
+            let targetID = e.currentTarget.id
+            console.log("子组件：" + targetID);
+            block.innerHTML = getChart;
+            const type = block.querySelector("span").dataset.type;
+            frameData[targetID] = type;
+            console.log(frameData);
+        });
     })
 })
-watch(props, (newProps, oldProps) => {
-    console.log("我收到的：" + newProps.message);
-    if (newProps.message) {
-        addID();
-        console.log("已经绑定好id了！！！！" + newProps.message);
-        let blocks = document.querySelectorAll(".droppable");
-        blocks.forEach(block => {
-            block.addEventListener("dragover", function (e) {
-                e.preventDefault();
-                let targetID = e.currentTarget.id
-                document.querySelector(`#${targetID}`).style.backgroundColor = "#ecf5ff";
-            })
-            block.addEventListener("dragleave", function (e) {
-                e.preventDefault();
-                let targetID = e.currentTarget.id
-                document.querySelector(`#${targetID}`).style.backgroundColor = "antiquewhite";
-            });
-            block.addEventListener("drop", function (e) {
-                e.preventDefault();
-                let getChart = e.dataTransfer.getData("html");
-                let targetID = e.currentTarget.id
-                console.log("子组件：" + targetID);
-                document.querySelector(`#${targetID}`).innerHTML = getChart;
-                const type = document.querySelector(`#${targetID} span`).dataset.type
-                frameData[targetID] = type;
-            });
-        })
-    }
-});
-
-
 
 </script>
 

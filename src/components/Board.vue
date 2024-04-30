@@ -1,15 +1,24 @@
 <template>
-    <div id="container">
-        <VisBlock :message="message[0]" class="box" id="box1">Box 1</VisBlock>
-        <VisBlock :message="message[1]" class="box" id="box2" style="top: 200px; left: 400px">Box 2</VisBlock>
-        <VisBlock :message="message[2]" class="box" id="box3" style="top: 300px; left: 400px">移动</VisBlock>
-    </div>
+        <el-button @click="addNode" type="primary" plain style="margin-bottom: 20px;">新增节点</el-button>
+        已有节点 {{ visBlocks.length }} 个
+  <div id="container">
+    <VisBlock
+      v-for="(visBlock, index) in visBlocks"
+      :key="index"
+      :id="visBlock.id"
+      class="box"
+      :style="{ top: visBlock.top, left: visBlock.left }"
+    >
+      Box {{ index + 1 }}
+    </VisBlock>
+  </div>
 </template>
 <script setup>
-import { onMounted,isRef,ref } from 'vue'
+import { onMounted,isRef,ref, onUpdated } from 'vue'
 import VisBlock from "@/components/VisBlock.vue";
 import {jsPlumb} from "jsplumb";
 let message=ref([false,false,false])
+let plumbIns = jsPlumb.getInstance()
 onMounted(() => {
     let blocks=document.querySelectorAll(".box")
     blocks.forEach(block=>{
@@ -22,8 +31,6 @@ onMounted(() => {
             console.log(message.value);
         })
     })
-
-    let plumbIns = jsPlumb.getInstance()
     // 初始化jsPlumb
     plumbIns.ready(function () {
         console.log("ready！");
@@ -50,13 +57,13 @@ onMounted(() => {
         };
 
         // 连接两个div
-        plumbIns.connect(
-            {
-                source: "box1",
-                target: "box2",
-            },
-            common
-        );
+        // plumbIns.connect(
+        //     {
+        //         source: "box1",
+        //         target: "box2",
+        //     },
+        //     common
+        // );
 
         // 设置连接容器
         plumbIns.setContainer("container");
@@ -64,26 +71,36 @@ onMounted(() => {
         // 设置可拖动
         plumbIns.draggable(plumbIns.getSelector(".box"));
 
-        plumbIns.addEndpoint(
-            "box3",
-            {
-                anchors: "Left",
-            },
-            common
-        );
-        plumbIns.addEndpoint(
-            "box2",
-            {
-                anchors: "Right",
-            },
-            common
-        );
+        // plumbIns.addEndpoint(
+        //     "box3",
+        //     {
+        //         anchors: "Left",
+        //     },
+        //     common
+        // );
+        // plumbIns.addEndpoint(
+        //     "box2",
+        //     {
+        //         anchors: "Right",
+        //     },
+        //     common
+        // );
 
         plumbIns.bind("connection", function (info, originalEvent) {
             console.log(info);
         });
     });
 })
+// onUpdated(()=>{
+//     plumbIns.draggable(plumbIns.getSelector(".box"));
+// })
+let visBlocks = ref([{ id: 'box1', top: '50px', left: '50px' }]);
+let boxNum = 1;
+function addNode() {
+  console.log("新增");
+  boxNum++;
+  visBlocks.value.push({ id: 'box' + boxNum, top: Math.random() * 300 + 'px', left: Math.random() * 300 + 'px' });
+}
 </script>
 
 <style lang="scss" scoped>

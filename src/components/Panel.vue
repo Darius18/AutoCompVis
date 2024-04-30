@@ -9,7 +9,8 @@
                     <ChartList></ChartList>
                 </el-aside>
                 <el-container>
-                    <el-main>Main
+                    <el-main>
+                        <!-- <vueDragDemo></vueDragDemo> -->
                         <Board></Board>
                         <!-- <VisBlock></VisBlock> -->
                         <!-- <ExportData :data="data"></ExportData> -->
@@ -23,6 +24,7 @@
 
 
 <script setup>
+// import vueDragDemo from './vueDragDemo.vue';
 import Board from './Board.vue';
 // import VisBlock from './VisBlock.vue';
 import Header from './Header.vue';
