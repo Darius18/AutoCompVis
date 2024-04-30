@@ -16,7 +16,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, onUpdated, onMounted, defineProps } from 'vue'
+import { ref, reactive, computed, watch, onUpdated, onMounted, defineProps,getCurrentInstance} from 'vue'
+const { emit } = getCurrentInstance();
 let props = defineProps({
     message: Boolean
 })
@@ -54,10 +55,14 @@ onMounted(() => {
             e.preventDefault();
             let getChart = e.dataTransfer.getData("html");
             let targetID = e.currentTarget.id
-            console.log("子组件：" + targetID);
+            // console.log("子组件：" + targetID);
             block.innerHTML = getChart;
             const type = block.querySelector("span").dataset.type;
             frameData[targetID] = type;
+            if(type==='MORE'){
+                console.log("触发新增节点！！");
+                emit('AddNode', true);
+            }
             console.log(frameData);
         });
     })

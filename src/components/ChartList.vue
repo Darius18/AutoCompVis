@@ -1,19 +1,13 @@
 <template>
   <div>
-    <el-menu
-      default-active="0"
-      class="el-menu-vertical-demo"
-      @open="handleOpen"
-      @close="handleClose"
-    >
-      <el-menu-item
-        v-for="chart in chartList"
-        index="chart.chart_id"
-        :key="chart.chart_id"
-        draggable="true"
-        @dragstart="dragStartHandler"
-        class="chartItem"
-      >
+    <el-menu default-active="0" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
+      <el-menu-item draggable="true" @dragstart="dragStartHandler" class="chartItem">
+        <el-icon><icon-menu /></el-icon>
+        <img src="../assets/chromatica.svg" alt="">
+        <span style="color:black;" data-type="MORE" class="chartTitle">新增复合图表</span>
+      </el-menu-item>
+      <el-menu-item v-for="chart in chartList" index="chart.chart_id" :key="chart.chart_id" draggable="true"
+        @dragstart="dragStartHandler" class="chartItem">
         <el-icon><icon-menu /></el-icon>
         <svg width="45px" height="45px" viewBox="0 0 175 138" version="1.1">
           <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -35,9 +29,9 @@ const handleClose = (key, keyPath) => {
   console.log(key, keyPath);
 };
 
-const dragStartHandler=(e)=>{
-//   console.log(e)
-  e.dataTransfer.setData('html',e.target.innerHTML)
+const dragStartHandler = (e) => {
+  //   console.log(e)
+  e.dataTransfer.setData('html', e.target.innerHTML)
 }
 </script>
 

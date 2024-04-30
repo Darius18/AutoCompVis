@@ -27,3 +27,19 @@ yarn dev
 ```sh
 yarn build
 ```
+# 导出的数据结构
+```js
+let describe = {
+  visualization_type: [
+    {
+      visualization_type: [
+        { chartType: "network_chart", data: data },
+        { chartType: "pie_chart", data: data.nodes },
+      ],
+      composition_pattern: "nested",
+    },
+    { chartType: "stack_bar_chart", data: data.nodes },
+  ],
+  composition_pattern: "repetition",
+};
+```

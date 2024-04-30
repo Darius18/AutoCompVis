@@ -8,34 +8,31 @@
       :id="visBlock.id"
       class="box"
       :style="{ top: visBlock.top, left: visBlock.left }"
+      @AddNode="addNode"
     >
       Box {{ index + 1 }}
     </VisBlock>
   </div>
 </template>
 <script setup>
-import { onMounted,isRef,ref, onUpdated } from 'vue'
+import { onMounted,isRef,ref, onUpdated,watchEffect,watch, nextTick } from 'vue'
 import VisBlock from "@/components/VisBlock.vue";
 import {jsPlumb} from "jsplumb";
-let message=ref([false,false,false])
-let plumbIns = jsPlumb.getInstance()
+let plumbIns;//实例
+let common;//通用的连接样式
 onMounted(() => {
     let blocks=document.querySelectorAll(".box")
     blocks.forEach(block=>{
         block.addEventListener("dragover",function (e) {
-            console.log("现在拖动的是"+e.currentTarget.id)
             let x = Number((e.currentTarget.id)[3])-1;
-            //然后给第x个子组件发送信息：activate:true
-            message.value=[false,false,false]
-            message.value[x]=true;
-            console.log(message.value);
         })
     })
     // 初始化jsPlumb
+    plumbIns = jsPlumb.getInstance()
     plumbIns.ready(function () {
         console.log("ready！");
         //设置连接的默认值
-        let common = {
+        common = {
             isSource: true,
             isTarget: true,
             anchors: ["Right", "Left"],
@@ -91,15 +88,27 @@ onMounted(() => {
         });
     });
 })
-// onUpdated(()=>{
-//     plumbIns.draggable(plumbIns.getSelector(".box"));
-// })
 let visBlocks = ref([{ id: 'box1', top: '50px', left: '50px' }]);
 let boxNum = 1;
+
 function addNode() {
   console.log("新增");
   boxNum++;
+  //给第boxnum个节点发送一个信号
   visBlocks.value.push({ id: 'box' + boxNum, top: Math.random() * 300 + 'px', left: Math.random() * 300 + 'px' });
+      // 初始化jsPlumb
+      nextTick(()=>{
+        //设置可拖动
+        plumbIns.draggable(plumbIns.getSelector("#box" + boxNum));
+        // 连接两个div
+        plumbIns.connect(
+            {
+                source: "box"+(boxNum-1),
+                target: "box"+boxNum,
+            },
+            common
+        );
+      })
 }
 </script>
 
