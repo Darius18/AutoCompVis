@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="chart-list">
     <el-menu default-active="0" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
       <el-menu-item draggable="true" @dragstart="dragStartHandler" class="chartItem">
         <el-icon><icon-menu /></el-icon>
@@ -39,5 +39,12 @@ const dragStartHandler = (e) => {
 .chartTitle {
   font-size: larger;
   margin-left: 20px;
+}
+.chart-list{
+  height: 680px;
+  overflow: scroll;
+}
+.chart-list::-webkit-scrollbar {
+    display: none;
 }
 </style>

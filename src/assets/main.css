@@ -2,9 +2,9 @@
 
 #app {
   /* width: auto; */
-  max-width: 1400px;
-  max-height: 1000px;
-  overflow: hidden;
+  max-width: 1700px;
+  max-height: 3000px;
+  /* overflow: hidden; */
   margin: 0 auto;
   padding: 2rem;
   font-weight: normal;

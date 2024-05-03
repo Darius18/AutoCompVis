@@ -17,7 +17,9 @@
 
 <script setup>
 import { ref, reactive, computed, watch, onUpdated, onMounted, defineProps,getCurrentInstance} from 'vue'
+import { useCompChart } from '../store/CompChart.js'
 const { emit } = getCurrentInstance();
+
 let props = defineProps({
     message: Boolean
 })
@@ -39,6 +41,7 @@ function clearID() {
     });
 }
 
+const CompStore = useCompChart()
 onMounted(() => {
     addID();
     let blocks = document.querySelectorAll(".droppable");
@@ -64,6 +67,8 @@ onMounted(() => {
                 emit('AddNode', true);
             }
             console.log(frameData);
+            CompStore.updateChart(frameData);
+
         });
     })
 })
