@@ -1,5 +1,5 @@
 <template>
-        <el-button @click="addNode" type="primary" plain style="margin-bottom: 20px;">新增节点</el-button>
+        <el-button @click="addNode" type="primary" plain style="margin-bottom: 20px;">重置画板</el-button>
         已有节点 {{ visBlocks.length }} 个
   <div id="container">
     <VisBlock
@@ -21,12 +21,12 @@ import {jsPlumb} from "jsplumb";
 let plumbIns;//实例
 let common;//通用的连接样式
 onMounted(() => {
-    let blocks=document.querySelectorAll(".box")
-    blocks.forEach(block=>{
-        block.addEventListener("dragover",function (e) {
-            let x = Number((e.currentTarget.id)[3])-1;
-        })
-    })
+    // let blocks=document.querySelectorAll(".box")
+    // blocks.forEach(block=>{
+    //     block.addEventListener("dragover",function (e) {
+    //         let x = Number((e.currentTarget.id)[3])-1;
+    //     })
+    // })
     // 初始化jsPlumb
     plumbIns = jsPlumb.getInstance()
     plumbIns.ready(function () {

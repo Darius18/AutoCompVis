@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, onUpdated, onMounted, defineProps,getCurrentInstance} from 'vue'
+import { ref, reactive, computed, watch, onUpdated, onMounted, defineProps, getCurrentInstance } from 'vue'
 import { useCompChart } from '../store/CompChart.js'
 const { emit } = getCurrentInstance();
 
@@ -29,21 +29,9 @@ let frameData = {
     compositePattern: ""
 }
 
-function addID() {
-    document.querySelectorAll(".droppable")[0].setAttribute('id', 'chart1')
-    document.querySelectorAll(".droppable")[1].setAttribute('id', 'chart2')
-    document.querySelectorAll(".droppable")[2].setAttribute('id', 'compositePattern')
-}
-
-function clearID() {
-    document.querySelectorAll(".droppable").forEach(element => {
-        element.removeAttribute('id');
-    });
-}
 
 const CompStore = useCompChart()
 onMounted(() => {
-    addID();
     let blocks = document.querySelectorAll(".droppable");
     blocks.forEach(block => {
         block.addEventListener("dragover", function (e) {
@@ -56,19 +44,35 @@ onMounted(() => {
         });
         block.addEventListener("drop", function (e) {
             e.preventDefault();
-            let getChart = e.dataTransfer.getData("html");
             let targetID = e.currentTarget.id
-            // console.log("子组件：" + targetID);
-            block.innerHTML = getChart;
-            const type = block.querySelector("span").dataset.type;
-            frameData[targetID] = type;
-            if(type==='MORE'){
-                console.log("触发新增节点！！");
-                emit('AddNode', true);
+            let getChart = e.dataTransfer.getData("html");
+            let getComposition = e.dataTransfer.getData("html_composition");
+            if (getChart != "") {
+                console.log("从chartlist中移过来的");
+
+                block.innerHTML = getChart;
+                const type = block.querySelector("span").dataset.type;
+                frameData[targetID] = type;
+                if (type === 'MORE') {
+                    console.log("触发新增节点！！");
+                    emit('AddNode', true);
+                }
+            } else {
+                console.log("从“复合模式”中移动过来的");
+                //说明是从“复合模式”中移动过来的
+                block.innerHTML = getComposition;
+                // 获取新添加的 img 元素
+                const imgElement = block.querySelector('.composition_img');
+
+                // 设置 img 元素的宽度和高度
+                imgElement.style.width = '50px';
+                imgElement.style.height = '50px';
+                imgElement.style.borderRadius = '10px'
+                imgElement.style.marginRight='10px'
+                console.log(block);
             }
             console.log(frameData);
             CompStore.updateChart(frameData);
-
         });
     })
 })
@@ -106,5 +110,19 @@ onMounted(() => {
     justify-content: center;
     border-radius: 7px;
     // color: black;
+}
+
+.compositePattern {
+    height: fit-content;
+    min-height: 60px;
+    // display: flex;
+    color: black;
+    padding: 10px;
+}
+
+.title_composition {
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 600;
 }
 </style>
