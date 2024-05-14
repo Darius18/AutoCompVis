@@ -2,13 +2,13 @@
     <div class="visBlock">
         <div class="bigblock">
             {{ message }}
-            <div class="chart droppable">
+            <div class="chart droppable" id="chart1">
                 chart1
             </div>
-            <div class="chart droppable">
+            <div class="chart droppable" id="chart2">
                 chart2
             </div>
-            <div class="compositePattern droppable">
+            <div class="compositePattern droppable" id="compositePattern">
                 compositePattern
             </div>
         </div>
@@ -19,16 +19,38 @@
 import { ref, reactive, computed, watch, onUpdated, onMounted, defineProps, getCurrentInstance } from 'vue'
 import { useCompChart } from '../store/CompChart.js'
 const { emit } = getCurrentInstance();
-
+import { useBoxNum } from '@/store/BoxNum.js';
+const BoxNum_store=useBoxNum()
+const this_box_id=BoxNum_store.box_number;
+//this_box_id作为这个box的标识符，会固定存在
 let props = defineProps({
-    message: Boolean
+    message: Boolean,
+    signToClean:Boolean //父组件发来这个清空的信号，如果为true则清空内容
 })
+console.log(props.signToClean);
+// watch(()=>props.signToClean,(value)=>{
+//     console.log("要清理了",value);
+//     if(value){
+//         document.querySelectorAll(".droppable").innerHTML=""
+//     }
+// })
+
+function cleanBox(){
+    console.log("要清理了cleanBoxcleanBoxcleanBoxcleanBoxcleanBoxcleanBoxcleanBox");
+    document.querySelectorAll(".droppable").innerHTML=""
+}
+defineExpose({
+    cleanBox
+})
+
 let frameData = {
+    boxID:"",
     chart1: "",
     chart2: "",
     compositePattern: ""
 }
 
+frameData["boxID"] = this_box_id;
 
 const CompStore = useCompChart()
 onMounted(() => {
@@ -44,17 +66,14 @@ onMounted(() => {
         });
         block.addEventListener("drop", function (e) {
             e.preventDefault();
-            let targetID = e.currentTarget.id
+            let targetID = e.currentTarget.id;
             let getChart = e.dataTransfer.getData("html");
             let getComposition = e.dataTransfer.getData("html_composition");
             if (getChart != "") {
-                console.log("从chartlist中移过来的");
-
                 block.innerHTML = getChart;
                 const type = block.querySelector("span").dataset.type;
                 frameData[targetID] = type;
                 if (type === 'MORE') {
-                    console.log("触发新增节点！！");
                     emit('AddNode', true);
                 }
             } else {
@@ -69,10 +88,12 @@ onMounted(() => {
                 imgElement.style.height = '50px';
                 imgElement.style.borderRadius = '10px'
                 imgElement.style.marginRight='10px'
-                console.log(block);
+                let spanText = block.querySelector('span.title_composition').textContent;
+                frameData['compositePattern']=spanText;
             }
-            console.log(frameData);
-            CompStore.updateChart(frameData);
+            //更新当前的数据
+            //把最新的数据更新到新的box中
+            CompStore.updateChart(frameData,this_box_id);
         });
     })
 })

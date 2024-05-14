@@ -111,7 +111,6 @@ import Board from './Board.vue';
 // import VisBlock from './VisBlock.vue';
 import Header from './Header.vue';
 import ChartList from './ChartList.vue';
-import DataPanel from './DataPanel.vue';
 
 import { onMounted } from 'vue';
 onMounted(() => {
@@ -127,7 +126,7 @@ onMounted(() => {
 
     //footer中的逻辑
     const dragStartHandler = (e) => {
-        //   console.log(e)
+        //把复合模式的代码转移
         e.dataTransfer.setData('html_composition', e.target.innerHTML)
     }
 </script>

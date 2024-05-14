@@ -6,10 +6,11 @@
     align-center
   >
     <span>{{ chartdata }}</span>
+    <data-panel :data="chartdata" copyable expanded="true"></data-panel>
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="centerDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="centerDialogVisible = false">
+        <el-button type="primary" @click="outputData">
           导出
         </el-button>
       </div>
@@ -43,8 +44,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
-
+import { ref } from "vue"
+import DataPanel from "./DataPanel.vue"
+import { ElMessage } from 'element-plus'
+import { ElNotification } from 'element-plus'
 let centerDialogVisible = ref(false)
 
 const activeIndex = ref("1");
@@ -64,7 +67,38 @@ function updateChartData(){
   console.log("重新获取一次chartdata");
   chartdata = ref(store.compChart);
 }
+function outputData(){
+  console.log("成功下载！");
   
+  // 将 JSON 数据转换为字符串
+const jsonString = JSON.stringify(chartdata);
+// 创建 Blob 对象
+const blob = new Blob([jsonString], { type: 'application/json' });
+// 创建链接
+const url = URL.createObjectURL(blob);
+// 创建下载链接
+const a = document.createElement('a');
+a.href = url;
+a.download = 'data.json';
+
+// 模拟点击下载
+a.click();
+
+// 释放链接
+URL.revokeObjectURL(url);
+
+// ElMessage({
+//     message: 'json文本下载成功！',
+//     type: 'success',
+//   })
+  ElNotification({
+    title: 'Success',
+    message: 'json文本下载成功！',
+    type: 'success',
+  })
+  
+}
+
 
 </script>
 

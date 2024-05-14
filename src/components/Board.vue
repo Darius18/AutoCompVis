@@ -1,25 +1,23 @@
 <template>
-        <el-button @click="addNode" type="primary" plain style="margin-bottom: 20px;">重置画板</el-button>
-        已有节点 {{ visBlocks.length }} 个
-  <div id="container">
-    <VisBlock
-      v-for="(visBlock, index) in visBlocks"
-      :key="index"
-      :id="visBlock.id"
-      class="box"
-      :style="{ top: visBlock.top, left: visBlock.left }"
-      @AddNode="addNode"
-    >
-      Box {{ index + 1 }}
-    </VisBlock>
-  </div>
+    <el-button @click="clean_board" type="primary" plain style="margin-bottom: 20px;">重置画板</el-button>
+    已有节点 {{ visBlocks.length }} 个
+    <div id="container">
+        <VisBlock v-for="(visBlock, index) in visBlocks" :key="index" :id="visBlock.id" class="box"
+            :style="{ top: visBlock.top, left: visBlock.left }" @AddNode="addNode"
+            :ref="index === 0 ? 'visblock_ref' : undefined">
+            Box {{ index + 1 }}
+        </VisBlock>
+    </div>
 </template>
 <script setup>
-import { onMounted,isRef,ref, onUpdated,watchEffect,watch, nextTick } from 'vue'
+import { onMounted, isRef, ref, onUpdated, watchEffect, watch, nextTick } from 'vue'
 import VisBlock from "@/components/VisBlock.vue";
-import {jsPlumb} from "jsplumb";
+import { jsPlumb } from "jsplumb";
+import { useCompChart } from '@/store/CompChart';
+import { useBoxNum } from '@/store/BoxNum';
 let plumbIns;//实例
 let common;//通用的连接样式
+let clean_board;
 onMounted(() => {
     // let blocks=document.querySelectorAll(".box")
     // blocks.forEach(block=>{
@@ -90,26 +88,48 @@ onMounted(() => {
 })
 let visBlocks = ref([{ id: 'box1', top: '50px', left: '50px' }]);
 let boxNum = 1;
-
+const boxNum_store = useBoxNum()
 function addNode() {
-  console.log("新增");
-  boxNum++;
-  //给第boxnum个节点发送一个信号
-  visBlocks.value.push({ id: 'box' + boxNum, top: Math.random() * 300 + 'px', left: Math.random() * 300 + 'px' });
-      // 初始化jsPlumb
-      nextTick(()=>{
+
+    boxNum++;
+    boxNum_store.box_number = boxNum;
+    console.log("新增 boxNum_store.box_number=", boxNum_store.box_number);
+    //给第boxnum个节点发送一个信号
+    visBlocks.value.push({ id: 'box' + boxNum, top: Math.random() * 300 + 'px', left: Math.random() * 300 + 'px' });
+    // 初始化jsPlumb
+    nextTick(() => {
         //设置可拖动
         plumbIns.draggable(plumbIns.getSelector("#box" + boxNum));
         // 连接两个div
         plumbIns.connect(
             {
-                source: "box"+(boxNum-1),
-                target: "box"+boxNum,
+                source: "box" + (boxNum - 1),
+                target: "box" + boxNum,
             },
             common
         );
-      })
+    })
 }
+
+let signToClean = ref(false);//给子组件发送信号清空visblock内的内容
+clean_board = function () {
+    console.log("cleannnnnnnnnnn");
+    location.reload(); // 默认行为，可能从浏览器缓存中加载
+
+    //原来的想法是从操作子组件，没能实现，直接刷新页面比较简单
+    // visBlocks.value = [{ id: 'box1', top: '50px', left: '50px' }];
+
+    // visblock_ref.value.cleanBox()
+    // const store_chart = useCompChart();
+    // store_chart.compChart = {
+    //     boxID: 1,
+    //     chart1: '',
+    //     chart2: '',
+    //     composition_pattern: ''
+    // }
+
+}
+
 </script>
 
 <style lang="scss" scoped>
